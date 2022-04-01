@@ -150,23 +150,30 @@ export class PizzaCatalogo extends Component{
             },
             body: JSON.stringify(pizza)
         };
-
-        fetch('pizza', options)
-            .then(
-                (response) =>  {return response.status;      }
-            ).then(
-                (code) => {
-                    if(code==201){
-                        console.log(code);
-                        
-                        const  pizzas = Array.from( this.state.data);
-                        pizzas.push({name: pizza.name});
-                        this.componentDidMount();                                        
-                        this.setState({ accion: 0 });
-                        
+        authService.getAccessToken().then(
+            (token) => {
+                const opciones = {
+                    headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+                };
+                fetch('pizza', opciones)
+                .then(
+                    (response) =>  {return response.status;      }
+                ).then(
+                    (code) => {
+                        if(code==201){
+                            console.log(code);
+                            
+                            const  pizzas = Array.from( this.state.data);
+                            pizzas.push({name: pizza.name});
+                            this.componentDidMount();                                        
+                            this.setState({ accion: 0 });
+                            
+                        }
                     }
-                }
-            );
+                );
+            }
+        )
+        
         
     }
 
@@ -189,7 +196,11 @@ export class PizzaCatalogo extends Component{
     }
 
     delete = async (id) => {
-        const response = await axios.delete("pizza/"+id);
+        const response = await axios.delete("pizza/"+id, {
+            headers:{
+                'authorization': 'Bearer '+  authService.getAccessToken()
+            }
+        });
         if (response.status==200 || response.status==204){
             this.componentDidMount();                                        
             this.setState({ accion: 0 });
