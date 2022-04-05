@@ -94,6 +94,12 @@ public class PizzaService
         pizzaUpdate.Toppings.ToList().ForEach(
             item => AddTopping(pizzaUpdate.Id, item.Id)
         );
+        if(pizzaUpdate.Name != piiza.Name ){
+            piiza.Name = pizzaUpdate.Name;
+            _context.Pizzas.Update(piiza);
+            _context.SaveChanges();
+        }
+
         
     }
 

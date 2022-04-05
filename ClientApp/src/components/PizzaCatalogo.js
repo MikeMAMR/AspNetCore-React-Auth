@@ -116,44 +116,44 @@ export class PizzaCatalogo extends Component{
     edit = (pizza) => {
     
         pizza.id = this.state.pizzaE.id;
-
-        const options = {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(pizza)
-        };
-
-        fetch('pizza', options)
-            .then(
-                (response) =>  {return response.status;      }
-            ).then(
-                (code) => {
-                    if(code==204){
-                        console.log(code);
-                        
-                        this.componentDidMount();                                        
-                        this.setState({ accion: 0 });
-                        
-                    }
-                }
-            );
-        
-    }
-
-    create = (pizza) => {
-        const options = {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(pizza)
-        };
         authService.getAccessToken().then(
             (token) => {
                 const opciones = {
-                    headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+                    method: "PUT",
+                    headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(pizza)
+                };
+                fetch('pizza', opciones)
+                    .then(
+                        (response) =>  {return response.status;      }
+                    ).then(
+                        (code) => {
+                            if(code==204){
+                                console.log(code);
+                                
+                                this.componentDidMount();                                        
+                                this.setState({ accion: 0 });
+                                
+                            }
+                        }
+                    );
+            }
+        )
+    }
+
+    create = (pizza) => {
+        authService.getAccessToken().then(
+            (token) => {
+                const opciones = {
+                    method: "POST",
+                    headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(pizza)
                 };
                 fetch('pizza', opciones)
                 .then(
@@ -178,7 +178,9 @@ export class PizzaCatalogo extends Component{
     }
 
     editar  = (item) => {
+        
         console.log(item);
+        
         authService.getAccessToken().then(
             (token) =>{
                 const opcines = {
@@ -195,16 +197,29 @@ export class PizzaCatalogo extends Component{
         );
     }
 
-    delete = async (id) => {
-        const response = await axios.delete("pizza/"+id, {
-            headers:{
-                'authorization': 'Bearer '+  authService.getAccessToken()
+    delete = (item) => {
+        authService.getAccessToken().then(
+            (token) => {
+                const opciones = {
+                    method: "DELETE",
+                    headers: {
+                    "Authorization": "Bearer " + token,
+                    },
+                };
+        fetch('pizza/'+item, opciones
+        ).then(
+            (response) =>  {return response.status;      }
+            )
+        .then (code => {
+            if(code==200){
+                this.componentDidMount(); 
+                const tmp = this.state.data;
+                this.setState({ data: tmp });
             }
-        });
-        if (response.status==200 || response.status==204){
-            this.componentDidMount();                                        
-            this.setState({ accion: 0 });
-        } 
+         }
+         );
+            }
+        )
     }
 
     mostrarModalInsertar = () => {

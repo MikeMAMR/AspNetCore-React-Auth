@@ -11,6 +11,7 @@ namespace aspnetcore_react_auth.Controllers;
 public class PizzaController : ControllerBase
 {
     PizzaService _service;
+    //private readonly UserManager<ApplicationUser> _userManager;
     
     public PizzaController(PizzaService service)
     {
@@ -64,6 +65,7 @@ public class PizzaController : ControllerBase
     [HttpPut]
     public IActionResult Update(Pizza pizzaEditar){
         _service.update(pizzaEditar);
+        
 
         return NoContent();
     }
